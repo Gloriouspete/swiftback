@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
-
+require("dotenv").config
+const url = process.env.DB_URL;
 function ConnectDb () {
 
-    mongoose.connect("mongodb://localhost:27017/swiftdb",{
+    mongoose.connect(url,{
         useNewUrlParser: true,
     
     })
