@@ -26,7 +26,7 @@ async function Block(req, res) {
     }
       User.updateOne(
         {
-          userid: params,
+          userid: userid,
         },
         {
           $push: { block: friendid },
