@@ -3,10 +3,7 @@ require("dotenv").config
 const url = process.env.DB_URL;
 function ConnectDb () {
 
-    mongoose.connect(url,{
-        useNewUrlParser: true,
-    
-    })
+    mongoose.connect(url)
     .then(() => {
         console.log("Connected to mongo db")
     })
