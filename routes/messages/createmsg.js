@@ -1,5 +1,6 @@
 const Chat = require("../../model/chat.js");
 const Block = require("../../model/block.js");
+const User = require("../../model/user.js")
 const generateString = require("../../services/generate.js");
 const getProfile = require("../../services/getProfile.js");
 
@@ -20,14 +21,14 @@ const getProfile = require("../../services/getProfile.js");
   if(!check){
     return res.json({
       success: false,
-      message: "You and this person blocked each other",
+      message: "This user Blocked you",
     });
   }
   const ChatRecord = await CheckChat(userid,friendid)
   if(ChatRecord.success){
     return res.json({
       success: true,
-      message: "You and this person blocked each other",
+      message: "You are already in conversation with this user",
       data: ChatRecord.chatid,
       record:"old"
     });
@@ -63,7 +64,7 @@ const getProfile = require("../../services/getProfile.js");
   }
 };
 
-async function CheckBlock (first,second) {
+async function CheckBlocuk (first,second) {
   try{
       const checkFirst = await Block.find({
         $or:[
@@ -116,5 +117,23 @@ async function CheckChat (first,second) {
     throw err
   }
 }
+async function CheckBlock (first,second) {
+  try{
+      const results = await User.findOne(
+        {userid:second}
+      )
+      const isBlocked = results.block.includes(first)
+      if(isBlocked){
+        return false
+      }
+      else {
+        return true
+      }
 
+  }
+  catch(err){
+    console.log(err)
+    throw err
+  }
+}
 module.exports = Createmessage;

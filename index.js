@@ -51,6 +51,7 @@ const Getgroup = require('./routes/group/getgroup.js');
 const Joingroup = require('./routes/group/joingroup.js');
 const Fetchgroupmsg = require('./routes/group/fetchmessages.js');
 const Blockuser = require('./routes/group/block.js');
+const Block = require('./routes/user/block.js');
 
 io.on("connection", (socket) => {
   Chat(socket,io)
@@ -72,6 +73,7 @@ app.post("/api/v1/getgroups",Getgroup)
 app.post("/api/v1/fetchgroupmsg",Fetchgroupmsg)
 app.post("/api/v1/joingroup",Joingroup)
 app.post("/api/v1/blockuser",Blockuser)
+app.post("/api/v1/block",Block)
 ConnectDb();
 server.listen(PORT, () =>{
     console.log("Server is started on" + PORT)
