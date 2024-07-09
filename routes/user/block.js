@@ -30,28 +30,19 @@ async function Block(req, res) {
         },
         {
           $push: { block: friendid },
-        },
-        (err, updatedGroup) => {
-            if (err) {
-              return res.json({
-                success: false,
-                message: "Unable to block this user",
-                error: "Internal server error, Unable to fetch Group",
-              });
-            }
+        })
+          
             return res.json({
               success: true,
               message: "Successfully Blocked the user",
               data: null,
             });
-          }
-      );
     
   } catch (error) {
     console.error("Error finding user credentials:", error);
     return res.json({
       success: false,
-      message: "Internal server error, Unable to fetch Group",
+      message: "Internal server error, Unable to block user",
       error: "Internal server error, Unable to fetch Group",
     });
   }
