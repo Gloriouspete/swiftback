@@ -1,6 +1,6 @@
 const getRoom = require( "../../services/getroom.js");
 const Addmessage = require( "../../services/message.js");
-//const Updateread = require( "../../services/updateread.js");
+const Updateread = require( "../../services/updateread.js");
 const AddForum = require( "../../services/forum.js");
 function Chat(socket, io) {
   console.log("a user connected");
@@ -43,7 +43,7 @@ function Chat(socket, io) {
     socket.join(room);
     io.to(room).emit("message", data);
   });
-/*
+
   socket.on("readreceipt", (data) => {
     console.log("receipt received", data);
     const room = data.roomid;
@@ -51,7 +51,7 @@ function Chat(socket, io) {
     Updateread(room, data.sender);
     io.to(room).emit("readreceipt",data.sender)
   });
-*/
+
   socket.on("groupmessage", (data) => {
     console.log("Message received:", data);
     AddForum(data);
