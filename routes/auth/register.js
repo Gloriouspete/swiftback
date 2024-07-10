@@ -45,7 +45,7 @@ async function Register(req, res) {
 
     return res
       .status(201)
-      .json({ success: true, message: "successful", token: token });
+      .json({ success: true, message: "successful", token: token ,userid:userid});
   } catch (error) {
     console.error("Error during user signup:", error);
     res
