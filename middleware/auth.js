@@ -22,10 +22,9 @@ function authenticateJWT(req, res, next) {
   }
 
   try {
-    console.log(token, "dde");
+    
     const decodedToken = jwt.verify(token, secretKey);
     req.user = decodedToken;
-    console.log("this is", req.user);
     next();
   } catch (error) {
     console.log(error);

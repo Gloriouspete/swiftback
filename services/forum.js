@@ -1,9 +1,13 @@
-
+const Group = require("../model/group.js")
 const Groupmsg = require("../model/groupmsg.js")
-const Addforum = (data) => {
+const Addforum = async(data) => {
     console.log('it got here',data)
   const {groupid, sender, sendername, type, message } = data;
   try {
+    const results = await Group.findById(groupid);
+    if (!results) return
+    const isBlocked = results.block.includes(sender);
+    if(isBlocked) return
     const newMessage = new Groupmsg({
       groupid,
       sender,
@@ -19,21 +23,6 @@ const Addforum = (data) => {
 };
 
 module.exports = Addforum;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -2,7 +2,6 @@ const Message = require("../model/message.js");
 const User = require("../model/user.js");
 
 const Addmessage = async (data) => {
-  console.log('it got here', data);
   const { chatid, sender, receiver, type, message } = data;
 
   try {
@@ -19,7 +18,6 @@ const Addmessage = async (data) => {
       message,
     });
 
-    console.log(newMessage);
     await newMessage.save();
     console.log('Message saved successfully.');
   } catch (error) {

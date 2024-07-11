@@ -2,86 +2,62 @@ const Group = require("../../model/group.js");
 
 async function Blockuser(req, res) {
   const { userid } = req.user;
-  const { params, sender } = req.body;
-
-  if (!params) {
+  const { groupid, sender } = req.body;
+  
+  if (!groupid) {
     return res.json({
       success: false,
-      message: "The resource sent is empty, You are advised to return",
+      message: "The resource sent is empty. Please provide a valid group ID.",
     });
   }
+  
   try {
-    const results = await Group.findById(params);
-    if (!results)
+    const group = await Group.findById(groupid);
+    
+    if (!group) {
       return res.json({
         success: false,
-        message: "Group Not found, Maybe it was deleted by admin",
+        message: "Group not found. It may have been deleted by an admin.",
       });
-    const isAdmin = results.admin === userid;
-    const isBlocked = results.block.includes(userid);
-    const isMember = results.members.includes(userid);
+    }
+    
+    const isAdmin = group.admin === userid;
+    const isBlocked = group.block.includes(sender);
+    
     if (!isAdmin) {
       return res.json({
         success: false,
-        message: "Only an admin can remove a user from a group",
+        message: "Only an admin can block a user from the group.",
       });
     }
+    
     if (isBlocked) {
       return res.json({
         success: false,
-        message: "You have already blocked this user from the group.",
+        message: "This user is already blocked from the group.",
       });
     }
-    if (isMember) {
-      Group.updateOne(
-        {
-          _id: params,
-        },
-        {
-          $pull: { members: sender },
-          $push: { block: sender },
-        },
-        (err, updatedGroup) => {
-            if (err) {
-              return res.json({
-                success: false,
-                message: "Error fetching ads",
-                error: "Internal server error, Unable to fetch Group",
-              });
-            }
-            return res.json({
-              success: true,
-              message: "Successfully Blocked the user",
-              data: null,
-            });
-          }
-      );
-    }
-    Group.findByIdAndUpdate(
-      params,
-      { $addToSet: { members: userid } },
-      { new: true, useFindAndModify: false },
-      (err, updatedGroup) => {
-        if (err) {
-          return res.json({
-            success: false,
-            message: "Error fetching ads",
-            error: "Internal server error, Unable to fetch Group",
-          });
-        }
-        return res.json({
-          success: true,
-          message: "Successfully Joined",
-          data: null,
-        });
+    
+    await Group.updateOne(
+      { _id: groupid },
+      {
+        $pull: { members: sender },
+        $push: { block: sender },
       }
     );
-  } catch (error) {
-    console.error("Error finding user credentials:", error);
+
     return res.json({
+      success: true,
+      message: "Successfully blocked the user.",
+      data: null,
+    });
+
+  } catch (error) {
+    console.error("Error blocking user:", error);
+    return res.status(500).json({
       success: false,
-      message: "Internal server error, Unable to fetch Group",
-      error: "Internal server error, Unable to fetch Group",
+      message: "Internal server error. Unable to block user.",
+      error: error.message,
     });
   }
 }

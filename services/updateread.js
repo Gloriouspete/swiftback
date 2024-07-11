@@ -1,6 +1,5 @@
 const Message = require("../model/message.js");
 async function Updateread(chatid, sender) {
-  console.log(chatid, sender + "pol");
   if (chatid === undefined || sender === undefined) {
     return;
   }

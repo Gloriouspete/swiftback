@@ -5,7 +5,6 @@ async function Retrievechats(req, res) {
 
   try {
     const chats = await getChats(userid)
-    console.log(chats,"looooool");
     res.status(200).json({
       success: true,
       message: "Details returned successfully",

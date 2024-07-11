@@ -1,38 +1,33 @@
-const getRoom = require( "../../services/getroom.js");
-const Addmessage = require( "../../services/message.js");
-const Updateread = require( "../../services/updateread.js");
-const AddForum = require( "../../services/forum.js");
+const getRoom = require("../../services/getroom.js");
+const Addmessage = require("../../services/message.js");
+const Updateread = require("../../services/updateread.js");
+const AddForum = require("../../services/forum.js");
+let users = {};
 function Chat(socket, io) {
   console.log("a user connected");
-
-  console.log("A user connected");
   socket.on("user-id", (userId) => {
     console.log("i don receive userid o ", userId);
     socket.join(userId);
   });
 
-  socket.on("start-conversation", (data) => {
-    console.log("User wants to start a conversation with:",data);
-    socket.join(data);
+
+socket.on("start-conversation", ({ chatid, userid }) => {
+  console.log("User wants to start a conversation with:", userid);
+  users[socket.id] = { userid, chatid };
+  socket.join(chatid);
+
+  const onlineUsers = Object.values(users).filter(user => user.chatid === chatid);
+
+  onlineUsers.forEach(user => {
+    console.log(user.userid, "is online");
+    io.to(chatid).emit("useronline", { userid: user.userid, online: true });
   });
+});
+
 
   socket.on("join-group", (data) => {
-    console.log("User wants to start a conversation with:",data);
+    console.log("User wants to start a conversation with:", data);
     socket.join(data);
-  });
-  socket.on("typing", (data) => {
-    console.log("Message received:", data);
-    const { id, sender } = data;
-    const room = getRoom(id, sender);
-    socket.join(room);
-    io.to(room).emit("typing", data);
-  });
-  socket.on("blur", (data) => {
-    console.log("Message received:", data);
-    const { id, sender } = data;
-    const room = getRoom(id, sender);
-    socket.join(room);
-    io.to(room).emit("blur", data);
   });
 
   socket.on("message", (data) => {
@@ -45,11 +40,10 @@ function Chat(socket, io) {
   });
 
   socket.on("readreceipt", (data) => {
-    console.log("receipt received", data);
     const room = data.roomid;
-    socket.join(room)
+    socket.join(room);
     Updateread(room, data.sender);
-    io.to(room).emit("readreceipt",data.sender)
+    io.to(room).emit("readreceipt", data.sender);
   });
 
   socket.on("groupmessage", (data) => {
@@ -62,8 +56,15 @@ function Chat(socket, io) {
   });
 
   socket.on("disconnect", () => {
-    console.log("A user disconnected");
+    const user = users[socket.id];
+    if (user) {
+      const { chatid, userid } = user;
+      delete users[socket.id];
+      console.log("A user disconnected");
+
+      io.to(chatid).emit("useronline", { userid, online: false });
+    }
   });
-};
+}
 
 module.exports = Chat;

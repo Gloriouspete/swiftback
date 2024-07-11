@@ -1,6 +1,6 @@
 const User = require("../../model/user.js");
 
-async function Block(req, res) {
+async function Unblock(req, res) {
   const { userid } = req.user;
   const { friendid } = req.body;
 
@@ -18,23 +18,23 @@ async function Block(req, res) {
         message: "Server error, Try agin later",
       });
     const isBlocked = results.block.includes(friendid)
-    if (isBlocked) {
+    if (!isBlocked) {
       return res.json({
         success: false,
-        message: "You have already blocked this user.",
+        message: "You never blocked this user.",
       });
     }
-      await User.updateOne(
+     await User.updateOne(
         {
           userid: userid,
         },
         {
-          $push: { block: friendid },
+          $pull: { block: friendid },
         })
           
             return res.json({
               success: true,
-              message: "Successfully Blocked the user",
+              message: "Successfully Unblocked the user",
               data: null,
             });
     
@@ -42,10 +42,10 @@ async function Block(req, res) {
     console.error("Error finding user credentials:", error);
     return res.json({
       success: false,
-      message: "Internal server error, Unable to block user",
+      message: "Internal server error, Unable to unblock user",
       error: "Internal server error, Unable to fetch Group",
     });
   }
 }
 
-module.exports = Block;
+module.exports = Unblock;
