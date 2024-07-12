@@ -56,6 +56,7 @@ const Unblock = require('./routes/user/unblock.js');
 const Deleteforummsg = require('./routes/group/deletemessage.js');
 const Deletegroup = require('./routes/group/deletegroup.js');
 const Deletechat = require('./routes/messages/deletechat.js');
+const Exitgroup = require('./routes/group/exitgroup.js');
 
 io.on("connection", (socket) => {
   Chat(socket,io)
@@ -81,6 +82,7 @@ app.post("/api/v1/block",Block)
 app.post("/api/v1/unblock",Unblock)
 app.post("/api/v1/deleteforummessage",Deleteforummsg);
 app.post("/api/v1/deletegroup",Deletegroup);
+app.post("/api/v1/exitgroup",Exitgroup);
 app.post("/api/v1/deletechat",Deletechat);
 
 ConnectDb();
