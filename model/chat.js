@@ -22,6 +22,11 @@ const chatSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  deleted: [
+    {
+      type: String,
+    },
+  ],
   date: {
     type: Date,
     default: Date.now,
