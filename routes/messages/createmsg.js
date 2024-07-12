@@ -88,15 +88,22 @@ async function CheckBlocuk (first,second) {
 }
 async function CheckChat (first,second) {
   try{
-      const checkFirst = await Chat.find({
+      const checkFirst = await Chat.findOne({
         $or:[
           {$and:[{firstid:first},{secondid:second}]},
           {$and:[{secondid:first},{firstid:second}]}
         ]
       })
+     
       console.log("reached here",checkFirst)
-      if(checkFirst.length > 0){
-        const result = checkFirst[0].chatid
+      if(checkFirst){
+        if(checkFirst.deleted.includes(first)){
+          await Chat.updateOne(
+            { _id: checkFirst._id },
+            { $pull: { deleted: first } }
+          );
+        }
+        const result = checkFirst.chatid;
         const load = {
           chatid:result,
           success:true
