@@ -56,8 +56,12 @@ const getChats = async (userid) => {
               $first:'$deleted'
             }
         }
+      },
+      {
+        $match: {
+          deleted: { $nin: [userid] },
+        },
       }
-     
     ]);
     return chats
   } catch (error) {
