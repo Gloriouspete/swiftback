@@ -60,6 +60,7 @@ const getChats = async (userid) => {
       {
         $match: {
           deleted: { $nin: [userid] },
+          msg: { $ne: null } 
         },
       }
     ]);
