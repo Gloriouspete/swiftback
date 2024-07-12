@@ -52,6 +52,9 @@ const getChats = async (userid) => {
             msg:{$first:'$messages'},
             firstid:{$first:'$firstid'},
             secondid:{$first:'$secondid'},
+            deleted:{
+              $first:'$deleted'
+            }
         }
       }
      
